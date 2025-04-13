@@ -27,7 +27,10 @@ while True:
             print(td.text)
             navegador.find_element("xpath", '//*[@id="table"]/tbody/tr[1]/td[2]/div/div/p').click()
             time.sleep(5)
-            navegador.find_element(By.XPATH, "//button[@value='CONTACTS']").click()
+            try:
+                navegador.find_element(By.XPATH, "//button[@value='CONTACTS']").click()
+            except:
+                pass
             time.sleep(15)
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
 
