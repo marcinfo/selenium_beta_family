@@ -37,11 +37,16 @@ while True:
                 EC.element_to_be_clickable((By.XPATH, "//span[@aria-label='Close']/button"))).click()
         except:
             print(f"Elemento na linha {i+1} não encontrado.")
-        i += 1
-        navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        if i < 100:
+            i += 1
+        else:
+            i = 0
+        #navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     try:
+        i = 0
         WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
             (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
+
     except:
         break
 
