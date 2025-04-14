@@ -41,6 +41,8 @@ while True:
             i += 1
         else:
             i = 0
+            WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
+                (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
         #navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     try:
         i = 0
