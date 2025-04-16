@@ -18,13 +18,14 @@ navegador.get("https://beta.familyofficelist.org/my-data")
 
 WebDriverWait(navegador, 100).until(EC.presence_of_element_located((By.XPATH, '//*[@id="table"]/tbody')))
 tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
+#time.sleep(30)
 my_data = []
 i = 0
-
+time.sleep(60)
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
-            print(td.text)
+            pass
         try:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
@@ -39,23 +40,22 @@ while True:
                 h3_tags = span.find_elements(By.TAG_NAME, 'h3')
                 h2_tags = span.find_elements(By.TAG_NAME, 'h2')
                 spaner = span.find_elements(By.TAG_NAME, 'span')
-                for tag in h3_tags + spaner + a_tags + p_tags + h2_tags:
+                for tag in h2_tags +h3_tags +  a_tags + p_tags + spaner:
                     my_data.append(tag.text)
+
+
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
+            print(i)
+
         except:
             print(f"Elemento na linha {i+1} não encontrado.")
-
-        #navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    try:
-        if i==100:
-            WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
-                (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
-            i=0
-    except:
-        pass
-
-df_my_data = pd.DataFrame(my_data)
+            if i >= 1000:
+                pd.DataFrame(my_data, columns=["Dados"]).to_csv('arquivo.csv', index=False)
+                WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
+                    (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
+                i = 0
+    #navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 print(my_data)
 time.sleep(50)
 navegador.quit()

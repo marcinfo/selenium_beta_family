@@ -24,11 +24,26 @@ i = 0
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
-            print(td.text)
+            pass
         try:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
+            spans = navegador.find_elements(By.CSS_SELECTOR,
+                                            'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
+            WebDriverWait(navegador, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                            'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
+
             try:
+                for span in spans:
+                    a_tags = span.find_elements(By.TAG_NAME, 'a')
+                    p_tags = span.find_elements(By.TAG_NAME, 'p')
+                    h3_tags = span.find_elements(By.TAG_NAME, 'h3')
+                    h2_tags = span.find_elements(By.TAG_NAME, 'h2')
+                    spaner = span.find_elements(By.TAG_NAME, 'span')
+                    for tag in h3_tags + h2_tags+ spaner + a_tags + p_tags :
+                        my_data.append(i+td.text+tag.text)
+                        print(my_data)
                 WebDriverWait(navegador, 10).until(
                     EC.element_to_be_clickable((By.XPATH, "//button[@value='CONTACTS']"))).click()
             except:
@@ -40,14 +55,12 @@ while True:
         i += 1
         #navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     try:
-        if i==100:
+        if i==1000:
             WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
                 (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
             i=0
     except:
         pass
 
-df_my_data = pd.DataFrame(my_data)
-print(my_data)
-time.sleep(50)
+
 navegador.quit()

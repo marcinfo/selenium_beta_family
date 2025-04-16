@@ -28,6 +28,12 @@ while True:
         try:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
+            spans = navegador.find_elements(By.CSS_SELECTOR,
+                                            'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
+            WebDriverWait(navegador, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                            'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
+
             try:
                 WebDriverWait(navegador, 10).until(
                     EC.element_to_be_clickable((By.XPATH, "//button[@value='CONTACTS']"))).click()
