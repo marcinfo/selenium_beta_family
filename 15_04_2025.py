@@ -25,6 +25,7 @@ i = 0
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
+
             pass
         try:
             WebDriverWait(navegador, 10).until(
@@ -34,25 +35,24 @@ while True:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR,
                                             'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
+            corporacao = navegador.find_element(By.XPATH,
+                                                '//h2[@class="MuiTypography-root MuiTypography-h2 css-psxwi0-root"]')
+
             for span in spans:
-                name1 = navegador.find_element(By.XPATH,
-                                                   '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
-                cargo1 = navegador.find_element(By.XPATH,'//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
                 try:
-                    name2 = navegador.find_element(By.XPATH,
+                    nome= navegador.find_element(By.XPATH,
                                                    '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
-                    cargo2 = navegador.find_element(By.XPATH,
+                    cargo = navegador.find_element(By.XPATH,
                                                    '//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
-                    phone2 = navegador.find_element(By.XPATH,'//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
+                    phone = navegador.find_element(By.XPATH,'//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
                 except:
                     pass
-                nome1=name1.text
-                cargo1=cargo1.text
-                nome2 = name2.text
-                cargo2 = cargo2.text
-                fone2 = phone2.text
+                corporacao = corporacao.text
+                nome = nome.text
+                cargo = cargo.text
+                fone = phone.text
 
-                print( nome1,nome2)
+                print( corporacao, nome, cargo, fone)
 
 
 
