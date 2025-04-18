@@ -25,7 +25,6 @@ i = 0
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
-
             pass
         try:
             WebDriverWait(navegador, 10).until(
@@ -35,36 +34,46 @@ while True:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR,
                                             'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
-            corporacao = navegador.find_element(By.XPATH,
-                                                '//h2[@class="MuiTypography-root MuiTypography-h2 css-psxwi0-root"]')
 
-            for span in spans:
-                try:
-                    nome= navegador.find_element(By.XPATH,
-                                                   '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
-                    cargo = navegador.find_element(By.XPATH,
-                                                   '//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
-                    phone = navegador.find_element(By.XPATH,'//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
-                except:
-                    pass
-                corporacao = corporacao.text
-                nome = nome.text
-                cargo = cargo.text
-                fone = phone.text
+            name1 = navegador.find_element(By.XPATH,
+                                               '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
 
-                print( corporacao, nome, cargo, fone)
+            nomes_texto = [nome.text for nome in navegador.find_elements(By.TAG_NAME, 'h3')]
 
 
+            cargos = navegador.find_elements(By.XPATH,
+                                          '//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
+            cargos_texto = [cargo.text for cargo in cargos]
 
+            phones = navegador.find_elements(By.XPATH,
+                                             '//div[@class="MuiBox-root css-0"]//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
+            phones_texto = [phone.text for phone in phones]
+
+            emails = navegador.find_elements(By.XPATH,'/html/body/div[4]/div[3]/div/div[2]/div[3]/div/div[1]/div[3]/a')
+            emails_texto = [email.text for email in emails]
+
+
+            dados = [{"id":i,"nome": nome, "cargo": cargo, "phone": phone, "email": email} for nome, cargo,phone,email in zip(nomes_texto, cargos_texto,phones_texto,emails_texto)]
+            """dados_com_phones = [{"id": i, "nome": nome, "cargo": cargo, "phone": phone} for i, (nome, cargo, phone) in
+                               enumerate(zip(nomes_texto, cargos_texto, phones_texto), start=1)]"""
+
+            for nome, cargo,phone,email in zip(nomes_texto, cargos_texto, phones_texto,emails_texto):
+                my_data.append({"id":i+1,"nome": nome, "cargo": cargo, "phone": phone, "email": email})
+                print(my_data)
+
+
+            """for dado in dados:
+                print(f"Nome: {dado['nome']}, Cargo: {dado['cargo']}")"""
 
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
-            print(i)
+            #print(i)
 
         except:
             print(f"Elemento na linha {i+1} não encontrado.")
             if i >= 1000:
-                pd.DataFrame(my_data, columns=["Dados"]).to_csv('arquivo.csv', index=False)
+
+
                 WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
                     (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
                 i = 0
