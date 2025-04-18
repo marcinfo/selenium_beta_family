@@ -49,14 +49,18 @@ while True:
                                              '//div[@class="MuiBox-root css-0"]//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
             phones_texto = [phone.text for phone in phones]
 
-            dados = [{"id":i,"nome": nome, "cargo": cargo, "phone": phone} for nome, cargo,phone in zip(nomes_texto, cargos_texto,phones_texto)]
+            emails = navegador.find_elements(By.XPATH,'/html/body/div[4]/div[3]/div/div[2]/div[3]/div/div[1]/div[3]/a')
+            emails_texto = [email.text for email in emails]
+
+
+            dados = [{"id":i,"nome": nome, "cargo": cargo, "phone": phone, "email": email} for nome, cargo,phone,email in zip(nomes_texto, cargos_texto,phones_texto,emails_texto)]
             """dados_com_phones = [{"id": i, "nome": nome, "cargo": cargo, "phone": phone} for i, (nome, cargo, phone) in
                                enumerate(zip(nomes_texto, cargos_texto, phones_texto), start=1)]"""
 
-            for nome, cargo,phone in zip(nomes_texto, cargos_texto, phones_texto):
-                my_data.append({"id":i+1,"nome": nome, "cargo": cargo, "phone": phone})
+            for nome, cargo,phone,email in zip(nomes_texto, cargos_texto, phones_texto,emails_texto):
+                my_data.append({"id":i+1,"nome": nome, "cargo": cargo, "phone": phone, "email": email})
                 print(my_data)
-            ##
+
 
             """for dado in dados:
                 print(f"Nome: {dado['nome']}, Cargo: {dado['cargo']}")"""
