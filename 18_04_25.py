@@ -18,14 +18,16 @@ navegador.get("https://beta.familyofficelist.org/my-data")
 
 WebDriverWait(navegador, 100).until(EC.presence_of_element_located((By.XPATH, '//*[@id="table"]/tbody')))
 tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
-#time.sleep(30)
+time.sleep(30)
 my_data = []
+company = []
 i = 0
 #time.sleep(60)
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
-            pass
+            company.append({"id": i + 1, "dados": td.text})
+
         try:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
@@ -34,6 +36,7 @@ while True:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR,
                                             'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
+
 
             name1 = navegador.find_element(By.XPATH,
                                                '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
@@ -50,7 +53,6 @@ while True:
             phones_texto = [phone.text for phone in phones]
 
             emails = td.find_elements(By.XPATH, '//a[contains(@href, "mailto")]')
-
             emails_texto = [email.text for email in emails]
 
 
@@ -59,8 +61,8 @@ while True:
                                enumerate(zip(nomes_texto, cargos_texto, phones_texto), start=1)]"""
 
             for nome, cargo,phone,email in zip(nomes_texto, cargos_texto, phones_texto,emails_texto):
-                my_data.append({"id":i+1,"nome": nome, "cargo": cargo, "phone": phone,"e-mail":email})
-                print(my_data)
+                my_data.append({"id":i+1,"company":td.text,"nome": nome, "cargo": cargo, "phone": phone,"e-mail":email})
+                #print(my_data)
             ##
 
             """for dado in dados:
@@ -68,16 +70,17 @@ while True:
 
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
-            #print(i)
+            print(i)
 
         except:
             print(f"Elemento na linha {i+1} não encontrado.")
             if i >= 1000:
+                pd.DataFrame(my_data).to_csv('contatos.csv', index=False)
+                pd.DataFrame(company).to_csv('company.csv', index=False)
+                """WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
+                    (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()"""
 
 
-                WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
-                    (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
-                i = 0
     #navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 print(my_data)
 time.sleep(50)

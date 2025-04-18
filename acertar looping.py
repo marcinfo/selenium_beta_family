@@ -19,12 +19,21 @@ navegador.get("https://beta.familyofficelist.org/my-data")
 WebDriverWait(navegador, 100).until(EC.presence_of_element_located((By.XPATH, '//*[@id="table"]/tbody')))
 tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
 my_data = []
+company = []
+dados = ""
 i = 0
-
+x=0
+time.sleep(15)
 while True:
-    for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
+    for x, tr in enumerate(tabela_movimentacoes.find_elements(By.TAG_NAME, "tr")):
+
+        dados = ""  # Inicializando como string
         for td in tr.find_elements(By.TAG_NAME, "td"):
-            print(td.text)
+            dados += td.text + " "  # Concatenando o texto de todos os td
+        company.append({"id": x + 1, "Company": dados.strip()})  # Adicionando à lista
+
+        x = x + 1
+        print(company)
         try:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
