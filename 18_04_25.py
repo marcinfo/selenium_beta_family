@@ -40,14 +40,23 @@ while True:
 
             nomes_texto = [nome.text for nome in navegador.find_elements(By.TAG_NAME, 'h3')]
 
+
             cargos = navegador.find_elements(By.XPATH,
                                           '//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
             cargos_texto = [cargo.text for cargo in cargos]
-            dados = [{"id":i,"nome": nome, "cargo": cargo} for nome, cargo in zip(nomes_texto, cargos_texto)]
 
-            for nome, cargo in zip(nomes_texto, cargos_texto):
-                my_data.append({"id":i+1,"nome": nome, "cargo": cargo})
+            phones = navegador.find_elements(By.XPATH,
+                                             '//div[@class="MuiBox-root css-0"]//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
+            phones_texto = [phone.text for phone in phones]
+
+            dados = [{"id":i,"nome": nome, "cargo": cargo, "phone": phone} for nome, cargo,phone in zip(nomes_texto, cargos_texto,phones_texto)]
+            """dados_com_phones = [{"id": i, "nome": nome, "cargo": cargo, "phone": phone} for i, (nome, cargo, phone) in
+                               enumerate(zip(nomes_texto, cargos_texto, phones_texto), start=1)]"""
+
+            for nome, cargo,phone in zip(nomes_texto, cargos_texto, phones_texto):
+                my_data.append({"id":i+1,"nome": nome, "cargo": cargo, "phone": phone})
                 print(my_data)
+            ##
 
             """for dado in dados:
                 print(f"Nome: {dado['nome']}, Cargo: {dado['cargo']}")"""
