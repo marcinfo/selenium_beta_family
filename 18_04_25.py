@@ -27,7 +27,7 @@ tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
 #time.sleep(30)
 my_data = []
 i = 0
-#time.sleep(60)
+time.sleep(60)
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
@@ -78,7 +78,7 @@ while True:
             for nome, cargo,phone,email in zip(nomes_texto, cargos_texto, phones_texto,emails_texto):
                 my_data.append({"id":i+1,"company":company,"web site":site,"office Type":office,"country":country,"city":city,\
                                 "contact": nome, "position": cargo, "phone": phone,"e-mail":email})
-                print(my_data)
+
 
 
             """for dado in dados:
@@ -86,16 +86,25 @@ while True:
 
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
-            #print(i)
-
-        except:
-            print(f"Elemento na linha {i+1} não encontrado.")
-            if i >= 1000:
-
+            print(i)
+            if i == 1000:
+                i=0
+                navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
                 WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
                     (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
-                i = 0
+                time.sleep(1)
+                navegador.execute_script("window.scrollTo(0, 0);")
+                WebDriverWait(navegador, 100).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="table"]/tbody')))
+        except:
+            print(f"Elemento na linha {i+1} não encontrado.")
+            df = pd.DataFrame(my_data)
+            # Exporta o DataFrame para um arquivo CSV
+            csv_file = "page1.csv"
+            df.to_csv(csv_file, index=False)
+            break
+
     #navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 print(my_data)
 time.sleep(50)
