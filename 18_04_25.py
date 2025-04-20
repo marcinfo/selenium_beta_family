@@ -4,6 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import time
 options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")
@@ -51,25 +52,38 @@ while True:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR,
                                             'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
+            try:
+                name1 = navegador.find_element(By.XPATH,
+                                                   '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
 
-            name1 = navegador.find_element(By.XPATH,
-                                               '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
-
-            nomes_texto = [nome.text for nome in navegador.find_elements(By.TAG_NAME, 'h3')]
+                nomes_texto = [nome.text for nome in navegador.find_elements(By.TAG_NAME, 'h3')]
 
 
-            cargos = navegador.find_elements(By.XPATH,
-                                          '//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
+                cargos = navegador.find_elements(By.XPATH,
+                                              '//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
+
+
+                phones = navegador.find_elements(By.XPATH,
+                                                 '//div[@class="MuiBox-root css-0"]//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
+
+
+                emails = td.find_elements(By.XPATH, '//a[contains(@href, "mailto")]')
+
+
+            except NoSuchElementException:
+                navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
+                name1 = "sem nome"
+                nomes_texto = []
+                cargos = []
+                phones = []
+                emails = []
+            except (NoSuchElementException, TimeoutException):
+                navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
+                continue
+
             cargos_texto = [cargo.text for cargo in cargos]
-
-            phones = navegador.find_elements(By.XPATH,
-                                             '//div[@class="MuiBox-root css-0"]//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
             phones_texto = [phone.text for phone in phones]
-
-            emails = td.find_elements(By.XPATH, '//a[contains(@href, "mailto")]')
-
             emails_texto = [email.text for email in emails]
-
 
             dados = [{"id":i,"nome": nome, "cargo": cargo, "phone": phone,"e-mail":email} for nome, cargo,phone,email in zip(nomes_texto, cargos_texto,phones_texto,emails_texto)]
             """dados_com_phones = [{"id": i, "nome": nome, "cargo": cargo, "phone": phone} for i, (nome, cargo, phone) in
@@ -87,25 +101,25 @@ while True:
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
             print(i)
-            if i == 1000:
+            if i == 892:
                 i=0
                 navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-                WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
-                    (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
-                time.sleep(1)
-                navegador.execute_script("window.scrollTo(0, 0);")
-                WebDriverWait(navegador, 100).until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@id="table"]/tbody')))
+                """WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
+                    (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()"""
+                
+                #navegador.execute_script("window.scrollTo(0, 0);")
+
         except:
             print(f"Elemento na linha {i+1} não encontrado.")
+
             df = pd.DataFrame(my_data)
             # Exporta o DataFrame para um arquivo CSV
-            csv_file = "page1.csv"
+            csv_file = "page5.csv"
             df.to_csv(csv_file, index=False)
             break
 
     #navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 print(my_data)
-time.sleep(50)
+
 navegador.quit()
