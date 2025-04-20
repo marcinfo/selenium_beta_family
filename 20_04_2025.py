@@ -6,11 +6,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import time
+
 options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")
 options.add_argument("--disable-infobars")
 options.add_argument("--disable-extensions")
-
 
 navegador = webdriver.Chrome(options=options)
 
@@ -25,7 +25,7 @@ navegador.get("https://beta.familyofficelist.org/my-data")
 
 WebDriverWait(navegador, 100).until(EC.presence_of_element_located((By.XPATH, '//*[@id="table"]/tbody')))
 tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
-#time.sleep(30)
+# time.sleep(30)
 my_data = []
 i = 0
 time.sleep(60)
@@ -33,7 +33,7 @@ while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
             td = tr.find_element(By.XPATH, 'td[2]')
-             # Localiza o elemento da empresa dentro da célula
+            # Localiza o elemento da empresa dentro da célula
 
             td_company = tr.find_element(By.XPATH, 'td[2]')
             company = td_company.find_element(By.XPATH, 'div/div/p').text
@@ -60,7 +60,6 @@ while True:
             except:
                 city = "no city"
 
-
         try:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
@@ -71,18 +70,15 @@ while True:
                                             'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
             try:
                 name1 = navegador.find_element(By.XPATH,
-                                                   '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
+                                               '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
 
                 nomes_texto = [nome.text for nome in navegador.find_elements(By.TAG_NAME, 'h3')]
 
-
                 cargos = navegador.find_elements(By.XPATH,
-                                              '//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
-
+                                                 '//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
 
                 phones = navegador.find_elements(By.XPATH,
                                                  '//div[@class="MuiBox-root css-0"]//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
-
 
                 emails = td.find_elements(By.XPATH, '//a[contains(@href, "mailto")]')
 
@@ -102,15 +98,15 @@ while True:
             phones_texto = [phone.text for phone in phones]
             emails_texto = [email.text for email in emails]
 
-            dados = [{"nome": nome, "cargo": cargo, "phone": phone,"e-mail":email} for nome, cargo,phone,email in zip(nomes_texto, cargos_texto,phones_texto,emails_texto)]
+            dados = [{"nome": nome, "cargo": cargo, "phone": phone, "e-mail": email} for nome, cargo, phone, email in
+                     zip(nomes_texto, cargos_texto, phones_texto, emails_texto)]
             """dados_com_phones = [{"id": i, "nome": nome, "cargo": cargo, "phone": phone} for i, (nome, cargo, phone) in
                                enumerate(zip(nomes_texto, cargos_texto, phones_texto), start=1)]"""
 
-            for nome, cargo,phone,email in zip(nomes_texto, cargos_texto, phones_texto,emails_texto):
-                my_data.append({"company":company,"web site":site,"office Type":office,"country":country,"city":city,\
-                                "contact": nome, "position": cargo, "phone": phone,"e-mail":email})
-
-
+            for nome, cargo, phone, email in zip(nomes_texto, cargos_texto, phones_texto, emails_texto):
+                my_data.append(
+                    {"company": company, "web site": site, "office Type": office, "country": country, "city": city, \
+                     "contact": nome, "position": cargo, "phone": phone, "e-mail": email})
 
             """for dado in dados:
                 print(f"Nome: {dado['nome']}, Cargo: {dado['cargo']}")"""
@@ -119,16 +115,16 @@ while True:
             i += 1
             print(i)
             if i == 1000:
-                i=0
+                i = 0
                 navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
                 """WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
                     (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()"""
-                
-                #navegador.execute_script("window.scrollTo(0, 0);")
+
+                # navegador.execute_script("window.scrollTo(0, 0);")
 
         except:
-            print(f"Elemento na linha {i+1} não encontrado.")
+            print(f"Elemento na linha {i + 1} não encontrado.")
 
             df = pd.DataFrame(my_data)
             # Exporta o DataFrame para um arquivo CSV
@@ -136,7 +132,7 @@ while True:
             df.to_csv(csv_file, index=False)
             break
 
-    #navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    # navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 print(my_data)
 
 navegador.quit()
