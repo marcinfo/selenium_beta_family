@@ -64,7 +64,7 @@ while True:
         except:
             print(f"Elemento na linha {i+1} não encontrado.")
             if i >= 1000:
-                pd.DataFrame(my_data, columns=["Dados"]).to_csv('arquivo.csv', index=False)
+                pd.DataFrame(my_data).to_csv('arquivo.csv', index=False)
                 WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
                     (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()
                 i = 0
