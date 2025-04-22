@@ -70,7 +70,26 @@ while True:
             target_geographies = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(1) > div:nth-child(1) > p')
             target_geographies_texto = [target_geographie.text for target_geographie in target_geographies]
 
-            print(company_name,web_sites_texto,investors_texto,phones_texto,adresses_texto,office_types_texto,descripition,target_geographies_texto)
+            deal_structures = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(1) > div:nth-child(2)')
+            deal=[]
+            for p_deal in deal_structures:
+                deal.append(p_deal)
+
+            industry_Focus = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(2) > div:nth-child(1)')
+            industry = []
+            for p_industry in industry_Focus:
+                industry.append(p_industry.text)
+
+            sub_industry = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(2) > div:nth-child(2)')
+            sub = []
+            for p_sub_industry in sub_industry:
+                # Substitui '\n' por espaços no texto do elemento
+                texto_corrigido = p_sub_industry.text.replace('\n', ' ')
+                # Adiciona o texto corrigido à lista 'sub'
+                sub.append(texto_corrigido)
+
+            print(sub)
+            print(company_name,web_sites_texto,investors_texto,phones_texto,adresses_texto,office_types_texto,descripition,target_geographies_texto,p_deal,industry,sub)
             time.sleep(10)
         #print(my_data)
 
