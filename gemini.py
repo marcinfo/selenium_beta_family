@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select, WebDriverWait
 import  pandas as pd
 import time
-from bs4 import BeautifulSoup
+from teste_bs4 import BeautifulSoup
 navegador = webdriver.Chrome()
 
 navegador.get("https://beta.familyofficelist.org/sign-in")

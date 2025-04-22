@@ -28,7 +28,7 @@ tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
 # time.sleep(30)
 my_data = []
 i = 0
-time.sleep(60)
+#time.sleep(60)
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
@@ -82,7 +82,11 @@ while True:
 
                 emails = td.find_elements(By.XPATH, '//a[contains(@href, "mailto")]')
 
-
+                WebDriverWait(navegador, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, "//button[@value='OFFICE']"))).click()
+                teste = navegador.find_elements(By.XPATH, '/html/body/div[4]/div[3]/div/div[2]/div[1]/h2')
+                print(teste)
+                navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             except NoSuchElementException:
                 navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
                 name1 = "sem nome"
@@ -114,7 +118,7 @@ while True:
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
             print(i)
-            if i == 1000:
+            if i == 100:
                 i = 0
                 navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
@@ -130,7 +134,7 @@ while True:
             # Exporta o DataFrame para um arquivo CSV
             csv_file = "page5.csv"
             df.to_csv(csv_file, index=False)
-            break
+        continue
 
     # navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 print(my_data)

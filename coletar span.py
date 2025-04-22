@@ -28,10 +28,9 @@ while True:
         time.sleep(2)
         spans = navegador.find_elements(By.CSS_SELECTOR,
                                         'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
-
         for span in spans:
             my_data.append(span.text)
             print(span.text)
         print(my_data)
-        time.sleep(50)
+
 navegador.quit()
