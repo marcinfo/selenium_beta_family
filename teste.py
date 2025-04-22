@@ -66,11 +66,11 @@ while True:
 
             for p in company_descriptions:
                 descripition.append(p.text)
-                print(descripition)
+
             target_geographies = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(1) > div:nth-child(1) > p')
             target_geographies_texto = [target_geographie.text for target_geographie in target_geographies]
 
-            print(company_name,web_sites_texto,investors_texto,phones_texto,adresses_texto,office_types_texto,company_descriptions_texto,target_geographies_texto)
+            print(company_name,web_sites_texto,investors_texto,phones_texto,adresses_texto,office_types_texto,descripition,target_geographies_texto)
             time.sleep(10)
         #print(my_data)
 
