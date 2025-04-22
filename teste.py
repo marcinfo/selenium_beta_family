@@ -82,14 +82,19 @@ while True:
 
             sub_industry = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(2) > div:nth-child(2)')
             sub = []
-            for p_sub_industry in sub_industry:
-                # Substitui '\n' por espaços no texto do elemento
-                texto_corrigido = p_sub_industry.text.replace('\n', ' ')
-                # Adiciona o texto corrigido à lista 'sub'
-                sub.append(texto_corrigido)
-
-            print(sub)
-            print(company_name,web_sites_texto,investors_texto,phones_texto,adresses_texto,office_types_texto,descripition,target_geographies_texto,p_deal,industry,sub)
+            for p_sub_industry  in sub_industry :
+                sub.append(p_sub_industry.text)
+            WebDriverWait(navegador, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                            'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
+            contact_names = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(1) > div.MuiBox-root.css-0 > h3')
+            contact_name_texto = [contact_name.text for contact_name in contact_names]
+            positions = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(1) > div.MuiBox-root.css-0 > span')
+            position_texto = [position.text for position in positions]
+            phones = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(2) > a')
+            phones_texto = [phone.text for phone in phones]
+            print(phones_texto)
+            print(contact_name_texto, position_texto,phones_texto)
             time.sleep(10)
         #print(my_data)
 
