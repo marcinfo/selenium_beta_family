@@ -7,7 +7,7 @@ import time
 
 from selenium.webdriver.support import expected_conditions as EC
 
-navegador = webdriver.Chrome()
+navegador = webdriver.Edge()
 
 navegador.get("https://beta.familyofficelist.org/sign-in")
 navegador.maximize_window()
@@ -15,7 +15,7 @@ time.sleep(2)
 navegador.find_element("id", ':r0:').send_keys('admin@strategic-cap.com')
 navegador.find_element("id", ':r1:').send_keys('StrategicCapital2025#')
 navegador.find_element("xpath", '//*[@id="root"]/div[1]/div/div[1]/div/form/div[5]/button').click()
-time.sleep(2)
+time.sleep(10)
 navegador.get("https://beta.familyofficelist.org/my-data")
 time.sleep(5)
 
@@ -23,79 +23,125 @@ tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
 
 # navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 my_data = []
-
+i = 0
+conta_corp=0
 while True:
     for tr in tabela_movimentacoes.find_elements("tag name", "tr"):
-        navegador.find_element("xpath", '//*[@id="table"]/tbody/tr[1]/td[2]/div/div/p').click()
-        time.sleep(2)
-        offices = navegador.find_elements(By.CSS_SELECTOR,
-                                        'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
-        for office in offices:
-
-            company_name = office.find_element("xpath", '//*[@id="table"]/tbody/tr[1]/td[2]/div/div/p').text
-
-            web_sites = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1) > a')
-            web_sites_texto = [web_site.text for web_site in web_sites]
-
-            investors = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > p')
-            investors_texto = [cargo.text for cargo in investors]
-
-            try:
-                phones = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2) > a')
-                phones_texto = [phone.text for phone in phones]
-            except:
-                phones_texto=''
-            adresses = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(3) > a')
-            adresses_texto = [adress.text for adress in adresses]
-
-            office_types = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(2) > p')
-            office_types_texto = [office_types.text for office_types in office_types]
-
-            company_descriptions = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(3) > div > div > div > div')
-
-            company_descriptions_texto = [company_description.text for company_description in company_descriptions]
-            descripition = []
-
-            read_more = WebDriverWait(navegador, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR,
-                                                    'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(3) > div > div > h4'))
-            )
-
-             # Clica no elemento
-            read_more.click()
-
-            for p in company_descriptions:
-                descripition.append(p.text)
-
-            target_geographies = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(1) > div:nth-child(1) > p')
-            target_geographies_texto = [target_geographie.text for target_geographie in target_geographies]
-
-            deal_structures = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(1) > div:nth-child(2)')
-            deal=[]
-            for p_deal in deal_structures:
-                deal.append(p_deal)
-
-            industry_Focus = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(2) > div:nth-child(1)')
-            industry = []
-            for p_industry in industry_Focus:
-                industry.append(p_industry.text)
-
-            sub_industry = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(2) > div:nth-child(2)')
-            sub = []
-            for p_sub_industry  in sub_industry :
-                sub.append(p_sub_industry.text)
+        for td in tr.find_elements(By.TAG_NAME, "td"):
             WebDriverWait(navegador, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR,
-                                            'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
-            contact_names = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(1) > div.MuiBox-root.css-0 > h3')
-            contact_name_texto = [contact_name.text for contact_name in contact_names]
-            positions = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(1) > div.MuiBox-root.css-0 > span')
-            position_texto = [position.text for position in positions]
-            phones = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(2) > a')
-            phones_texto = [phone.text for phone in phones]
-            print(phones_texto)
-            print(contact_name_texto, position_texto,phones_texto)
-            time.sleep(10)
-        #print(my_data)
+                EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
+            time.sleep(2)
+
+
+            offices = navegador.find_elements(By.CSS_SELECTOR,
+                                            'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
+
+            for office in offices:
+                try:
+                    navegador.find_elements(By.XPATH, "//button[@value='OFFICE']").click()
+                except:
+                    pass
+                company_name = office.find_element(By.CSS_SELECTOR, 'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(1) > h2').text
+
+                web_sites = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1) > a')
+
+                web_sites_texto = [web_site.text for web_site in web_sites]
+                web = "\n".join(web_sites_texto)
+                print(web)
+
+                investors = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > p')
+                investors_texto = [cargo.text for cargo in investors]
+
+                try:
+                    phones = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2) > a')
+                    phones_texto = [phone.text for phone in phones]
+                except:
+                    phones_texto=''
+                adresses = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(3) > a')
+                adresses_texto = [adress.text for adress in adresses]
+
+                office_types = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(2) > p')
+                office_types_texto = [office_types.text for office_types in office_types]
+
+                company_descriptions = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(3) > div > div > div > div')
+
+                company_descriptions_texto = [company_description.text for company_description in company_descriptions]
+                descripition = []
+
+                read_more = WebDriverWait(navegador, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR,
+                                                        'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(3) > div > div > h4'))
+                )
+                 # Clica no elemento
+                read_more.click()
+                for p in company_descriptions:
+                    descripition.append(p.text)
+
+                target_geographies = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(1) > div:nth-child(1) > p')
+                target_geographies_texto = [target_geographie.text for target_geographie in target_geographies]
+
+                deal_structures = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(1) > div:nth-child(2)')
+                deal=[]
+                for p_deal in deal_structures:
+                    deal.append(p_deal)
+
+                industry_Focus = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(2) > div:nth-child(1)')
+                industry = []
+                for p_industry in industry_Focus:
+                    industry.append(p_industry.text)
+
+                sub_industry = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(2) > div:nth-child(2)')
+                sub = []
+                for p_sub_industry  in sub_industry :
+                    sub.append(p_sub_industry.text)
+                WebDriverWait(navegador, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                                'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
+                contact_names = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(1) > div.MuiBox-root.css-0 > h3')
+                nome= [nome.text for nome in contact_names]
+                positions = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(1) > div.MuiBox-root.css-0 > span')
+
+                contact_phones = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(2) > a')
+
+                e_mails = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div:nth-child(3) > a')
+
+                navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
+
+                contact_name_texto = [contact_name.text for contact_name in contact_names]
+                position_texto = [position.text for position in positions]
+                contact_phones_texto = [contact_phone.text for contact_phone in contact_phones]
+                e_mail_texto = [e_mail.text for e_mail in e_mails]
+                x=0
+                for x, (nome, cargo, phone, email) in enumerate(
+                        zip(contact_name_texto, position_texto, contact_phones_texto,e_mail_texto)):
+                    my_data.append(
+                        { "company_name": company_name, "web site":web, "investors":investors_texto, "adress":adresses_texto, "deal":deal,\
+                         "industry":industry, "sub-industry":sub,"descripition":descripition,"nome": nome, "cargo": cargo, "contact phone": contact_phones_texto,
+                         "e-mail": email}
+                    )
+                i = i + 1
+                conta_corp = conta_corp + 1
+                print(conta_corp)
+                print(my_data)
+                if i<=99:
+                    continue
+
+                else:
+                    try:
+                        navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+                        navegador.find_element("xpath",
+                                               '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button').click()
+                    except:
+                        break
+                    i=0
+                    navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                    df = pd.DataFrame(my_data)
+                    #df = df.replace('\n', ' ', regex=True)
+                    # Exporta o DataFrame para um arquivo CSV
+                    csv_file = "page6.csv"
+                    df.to_csv(csv_file, index=False)
+
+            #print(my_data)
 
 navegador.quit()
