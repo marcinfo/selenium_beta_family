@@ -3,19 +3,25 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import time
 
-from selenium.webdriver.support import expected_conditions as EC
-
+options = webdriver.EdgeOptions()
+options.add_argument("--start-maximized")
+options.add_argument("--disable-infobars")
+options.add_argument("--disable-extensions")
+options.add_argument("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0")
+options.add_argument("--force-device-scale-factor=0.8")
 navegador = webdriver.Edge()
-
-navegador.get("https://beta.familyofficelist.org/sign-in")
 navegador.maximize_window()
+navegador.get("https://beta.familyofficelist.org/sign-in")
+
 time.sleep(2)
 navegador.find_element("id", ':r0:').send_keys('admin@strategic-cap.com')
 navegador.find_element("id", ':r1:').send_keys('StrategicCapital2025#')
 navegador.find_element("xpath", '//*[@id="root"]/div[1]/div/div[1]/div/form/div[5]/button').click()
-time.sleep(10)
+time.sleep(5)
 navegador.get("https://beta.familyofficelist.org/my-data")
 time.sleep(5)
 
@@ -25,46 +31,57 @@ tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
 my_data = []
 i = 0
 conta_corp=0
+total_linhas = navegador.find_elements(By.CSS_SELECTOR,'#simple-tabpanel-0 > div > div:nth-child(1) > div > div.MuiBox-root.css-0 > div > p.MuiTypography-root.MuiTypography-body2.css-kjrll7-root > span:nth-child(2)')
+total_linhas_texto = [total_linha.text for total_linha in total_linhas]
+total_linhas_int = [int(total_linha) for total_linha in total_linhas_texto]
+
+
+
+
 while True:
     for tr in tabela_movimentacoes.find_elements("tag name", "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
+
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
-            time.sleep(2)
-
-
+            time.sleep(1)
             offices = navegador.find_elements(By.CSS_SELECTOR,
                                             'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
-
+            try:
+                time.sleep(1)
+                navegador.find_elements(By.XPATH, "//button[@value='OFFICE']").click()
+            except:
+                pass
             for office in offices:
-                try:
-                    navegador.find_elements(By.XPATH, "//button[@value='OFFICE']").click()
-                except:
-                    pass
+
                 company_name = office.find_element(By.CSS_SELECTOR, 'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(1) > h2').text
+                if i == 0:
+                    time.sleep(1)
 
-                web_sites = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1) > a')
+                    web_sites = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(1) > a')
+                    web_sites_texto = [web_site.text for web_site in web_sites]
+                    web = "\n".join(web_sites_texto)
 
-                web_sites_texto = [web_site.text for web_site in web_sites]
-                web = "\n".join(web_sites_texto)
-                print(web)
-
-                investors = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > p')
-                investors_texto = [cargo.text for cargo in investors]
-
+                    investors = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > p')
+                    investors_texto = [investor.text for investor in investors]
+                    inves = "\n".join(investors_texto)
+                else:
+                    pass
                 try:
                     phones = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2) > a')
                     phones_texto = [phone.text for phone in phones]
+                    fone = "\n".join(phones_texto)
+
                 except:
-                    phones_texto=''
-                adresses = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(3) > a')
+                    fone=''
+                adresses = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2) > a')
                 adresses_texto = [adress.text for adress in adresses]
+                endereco = "\n".join(adresses_texto)
 
                 office_types = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(2) > p')
                 office_types_texto = [office_types.text for office_types in office_types]
 
                 company_descriptions = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(3) > div > div > div > div')
-
                 company_descriptions_texto = [company_description.text for company_description in company_descriptions]
                 descripition = []
 
@@ -75,7 +92,7 @@ while True:
                  # Clica no elemento
                 read_more.click()
                 for p in company_descriptions:
-                    descripition.append(p.text)
+                    descripit= "\n".join(p.text)
 
                 target_geographies = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(1) > div:nth-child(1) > p')
                 target_geographies_texto = [target_geographie.text for target_geographie in target_geographies]
@@ -83,7 +100,9 @@ while True:
                 deal_structures = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(1) > div:nth-child(2)')
                 deal=[]
                 for p_deal in deal_structures:
-                    deal.append(p_deal)
+                    deal.append(p_deal.text)
+                deals = "\n".join(deal)
+
 
                 industry_Focus = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(2) > div:nth-child(1)')
                 industry = []
@@ -115,26 +134,29 @@ while True:
                 for x, (nome, cargo, phone, email) in enumerate(
                         zip(contact_name_texto, position_texto, contact_phones_texto,e_mail_texto)):
                     my_data.append(
-                        { "company_name": company_name, "web site":web, "investors":investors_texto, "adress":adresses_texto, "deal":deal,\
-                         "industry":industry, "sub-industry":sub,"descripition":descripition,"nome": nome, "cargo": cargo, "contact phone": contact_phones_texto,
+                        { "company_name": company_name, "web site":web, "investors":inves, "adress":endereco, "deal":deals,\
+                         "industry":industry, "sub-industry":sub,"descripition":descripition,"nome": nome, "cargo": cargo, "contact phone": fone,
                          "e-mail": email}
                     )
                 i = i + 1
+                print("processada a linha ",conta_corp)
                 conta_corp = conta_corp + 1
-                print(conta_corp)
+
                 print(my_data)
                 if i<=99:
                     continue
-
                 else:
                     try:
                         navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
                         navegador.find_element("xpath",
                                                '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button').click()
                     except:
                         break
                     i=0
+                    total_linhas = navegador.find_elements(By.CSS_SELECTOR,
+                                                           '#simple-tabpanel-0 > div > div:nth-child(1) > div > div.MuiBox-root.css-0 > div > p.MuiTypography-root.MuiTypography-body2.css-kjrll7-root > span:nth-child(2)')
+                    total_linhas_texto = [total_linha.text for total_linha in total_linhas]
+
                     navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                     df = pd.DataFrame(my_data)
                     #df = df.replace('\n', ' ', regex=True)
