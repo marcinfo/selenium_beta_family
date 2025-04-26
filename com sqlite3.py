@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 import time
+import sqlite3
 
 options = webdriver.EdgeOptions()
 options.add_argument("--start-maximized")
@@ -40,6 +41,21 @@ total_linhas_texto = [total_linha.text for total_linha in total_linhas]
 total = int(total_linhas_texto[0])
 print(total)
 time.sleep(20)
+# Conectar ao banco de dados
+"""conn = sqlite3.connect('my_data.db')
+cursor = conn.cursor()"""
+# Criar tabela se não existir
+"""cursor.execute('''
+CREATE TABLE IF NOT EXISTS contacts (
+    id INTEGER PRIMARY KEY,
+    nome TEXT,
+    cargo TEXT,
+    phone TEXT,
+    email TEXT
+)
+''')"""
+
+
 while True:
     for tr in tabela_movimentacoes.find_elements("tag name", "tr"):
         try:
@@ -179,16 +195,20 @@ while True:
                     contact_name_texto = [contact_name.text for contact_name in contact_names]
                     position_texto = [position.text for position in positions]
                     contact_phones_texto = [contact_phone.text for contact_phone in contact_phones]
+
                     e_mail_texto = [e_mail.text for e_mail in e_mails]
                     x=0
                     for x, (nome, cargo, phone, email) in enumerate(
                             zip(contact_name_texto, position_texto, contact_phones_texto,e_mail_texto)):
-                        my_data.append(
-                            { "company_name": company_name, "web site":web, "investors":inves, "address":endereco, "deal":deals,\
-                             "industry":industry, "sub-industry":sub,"descripition":descripit,"nome": nome, "cargo": cargo, "contact phone": fone,
-                             "e-mail": email}
-                        )
-
+                        conn = sqlite3.connect('my_data.db')
+                        cursor = conn.cursor()
+                        cursor.execute('''
+                                INSERT INTO contacts (nome, cargo, phone, email)
+                                VALUES (?, ?, ?, ?)
+                            ''', (nome, cargo, phone, email))
+                        conn.commit()  # Corrigido de 'comit' para 'commit'
+                        cursor.close()
+                        conn.close()  # Adicionado para fechar a conexão com o banco de dados
 
                     i = i + 1
                     conta_corp = conta_corp + 1
