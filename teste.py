@@ -15,6 +15,7 @@ options.add_argument("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.
 options.add_argument("--force-device-scale-factor=0.8")
 navegador = webdriver.Edge()
 navegador.maximize_window()
+navegador.execute_script("document.body.style.zoom='60%'")
 navegador.get("https://beta.familyofficelist.org/sign-in")
 
 time.sleep(2)
@@ -101,7 +102,7 @@ while True:
                 deal=[]
                 for p_deal in deal_structures:
                     deal.append(p_deal.text)
-                deals = "\n".join(deal)
+
 
 
                 industry_Focus = navegador.find_elements(By.CSS_SELECTOR,'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(5) > div > div:nth-child(2) > div:nth-child(1)')
@@ -134,7 +135,7 @@ while True:
                 for x, (nome, cargo, phone, email) in enumerate(
                         zip(contact_name_texto, position_texto, contact_phones_texto,e_mail_texto)):
                     my_data.append(
-                        { "company_name": company_name, "web site":web, "investors":inves, "adress":endereco, "deal":deals,\
+                        { "company_name": company_name, "web site":web, "investors":inves, "adress":endereco, "deal":deal,\
                          "industry":industry, "sub-industry":sub,"descripition":descripition,"nome": nome, "cargo": cargo, "contact phone": fone,
                          "e-mail": email}
                     )
