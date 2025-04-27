@@ -7,12 +7,15 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import time
 
-options = webdriver.ChromeOptions()
+options = webdriver.EdgeOptions()
 options.add_argument("--start-maximized")
+
 options.add_argument("--disable-infobars")
 options.add_argument("--disable-extensions")
-
-navegador = webdriver.Chrome(options=options)
+options.add_argument("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0")
+options.add_argument("--force-device-scale-factor=0.8")
+navegador = webdriver.Edge(options=options)
+navegador.maximize_window()
 
 navegador.get("https://beta.familyofficelist.org/sign-in")
 navegador.maximize_window()
@@ -28,7 +31,7 @@ tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
 # time.sleep(30)
 my_data = []
 i = 0
-time.sleep(60)
+#time.sleep(60)
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
