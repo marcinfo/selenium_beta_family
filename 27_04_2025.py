@@ -87,6 +87,7 @@ while True:
             for office in offices:
                 company_name = office.find_element(By.CSS_SELECTOR,
                                                    'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(1) > h2').text
+
                 pass
             try:
 
@@ -125,32 +126,20 @@ while True:
             except (NoSuchElementException, TimeoutException):
                 navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
                 continue
-
             cargos_texto = [cargo.text for cargo in cargos]
             phones_texto = [phone.text for phone in phones]
             emails_texto = [email.text for email in emails]
 
-            dados = [{"nome": nome, "cargo": cargo, "phone": phone, "e-mail": email} for nome, cargo, phone, email in
-                     zip(nomes_texto, cargos_texto, phones_texto, emails_texto)]
-            """dados_com_phones = [{"id": i, "nome": nome, "cargo": cargo, "phone": phone} for i, (nome, cargo, phone) in
-                               enumerate(zip(nomes_texto, cargos_texto, phones_texto), start=1)]"""
-
             for nome, cargo, phone, email in zip(nomes_texto, cargos_texto, phones_texto, emails_texto):
-                """my_data.append(
-                    {"company": company, "web site": site, "office Type": office, "country": country, "city": city, \
-                     "contact": nome, "position": cargo, "phone": phone, "e-mail": email})"""
                 conn = sqlite3.connect('my_data.db')
                 cursor = conn.cursor()
                 cursor.execute('''
-                        INSERT INTO contacts (company,website,office_type,nome, cargo, phone, email)
-                        VALUES (?,?,?, ?, ?, ?)
-                    ''', (company,site,office,nome, cargo, phone, email))
+                            INSERT INTO contacts (company, website, city_company, country_company, nome, cargo, contact_phone, email)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        ''', (company, site, city, country, nome, cargo, phone, email))
                 conn.commit()  # Corrigido de 'comit' para 'commit'
                 cursor.close()
                 conn.close()  # Adicionado para fechar a conexão com o banco de dados
-
-            """for dado in dados:
-                print(f"Nome: {dado['nome']}, Cargo: {dado['cargo']}")"""
 
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
