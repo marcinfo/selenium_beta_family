@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import time
-
+import sqlite3
 options = webdriver.EdgeOptions()
 options.add_argument("--start-maximized")
 
@@ -31,6 +31,11 @@ tabela_movimentacoes = navegador.find_element("xpath", '//*[@id="table"]/tbody')
 # time.sleep(30)
 my_data = []
 i = 0
+conta_corp=0
+total_linhas = navegador.find_elements(By.CSS_SELECTOR,'#simple-tabpanel-0 > div > div:nth-child(1) > div > div.MuiBox-root.css-0 > div > p.MuiTypography-root.MuiTypography-body2.css-kjrll7-root > span:nth-child(1)')
+total_linhas_texto = [total_linha.text for total_linha in total_linhas]
+total = int(total_linhas_texto[0])
+print(total)
 #time.sleep(60)
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
@@ -66,7 +71,7 @@ while True:
         try:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
-            time.sleep(1)
+            #time.sleep(1)
             offices = navegador.find_elements(By.CSS_SELECTOR,
                                               'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
             try:
@@ -82,7 +87,7 @@ while True:
             for office in offices:
                 company_name = office.find_element(By.CSS_SELECTOR,
                                                    'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(1) > h2').text
-                print(company_name)
+                pass
             try:
 
                 WebDriverWait(navegador, 10).until(
@@ -131,16 +136,26 @@ while True:
                                enumerate(zip(nomes_texto, cargos_texto, phones_texto), start=1)]"""
 
             for nome, cargo, phone, email in zip(nomes_texto, cargos_texto, phones_texto, emails_texto):
-                my_data.append(
+                """my_data.append(
                     {"company": company, "web site": site, "office Type": office, "country": country, "city": city, \
-                     "contact": nome, "position": cargo, "phone": phone, "e-mail": email})
+                     "contact": nome, "position": cargo, "phone": phone, "e-mail": email})"""
+                conn = sqlite3.connect('my_data.db')
+                cursor = conn.cursor()
+                cursor.execute('''
+                        INSERT INTO contacts (company,website,office_type,nome, cargo, phone, email)
+                        VALUES (?,?,?, ?, ?, ?)
+                    ''', (company,site,office,nome, cargo, phone, email))
+                conn.commit()  # Corrigido de 'comit' para 'commit'
+                cursor.close()
+                conn.close()  # Adicionado para fechar a conexão com o banco de dados
 
             """for dado in dados:
                 print(f"Nome: {dado['nome']}, Cargo: {dado['cargo']}")"""
 
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
-            print(i)
+            conta_corp = conta_corp + 1
+            print(f"total processada {conta_corp}, de {total} linha atual {i}  ", )
             if i == 100:
                 i = 0
                 navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -151,11 +166,11 @@ while True:
         except:
             print(f"Elemento na linha {i + 1} não encontrado.")
 
-            df = pd.DataFrame(my_data)
+            """df = pd.DataFrame(my_data)
             # Exporta o DataFrame para um arquivo CSV
             csv_file = "page5.csv"
             df.to_csv(csv_file, index=False)
-            break
+            break"""
 
     # navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 print(my_data)
