@@ -35,7 +35,7 @@ conta_corp=0
 total_linhas = navegador.find_elements(By.CSS_SELECTOR,'#simple-tabpanel-0 > div > div:nth-child(1) > div > div.MuiBox-root.css-0 > div > p.MuiTypography-root.MuiTypography-body2.css-kjrll7-root > span:nth-child(1)')
 total_linhas_texto = [total_linha.text for total_linha in total_linhas]
 total = int(total_linhas_texto[0])
-print(total)
+conta_contatos=1
 #time.sleep(60)
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
@@ -157,13 +157,13 @@ while True:
                 conn = sqlite3.connect('my_data.db')
                 cursor = conn.cursor()
                 cursor.execute('''
-                            INSERT INTO contacts (company, website, office,investors,company_phones,\
+                            INSERT INTO contacts (count_contact,company, website, office,investors,company_phones,\
                              company_address,city_company, country_company, nome, cargo, contact_phone, email)
-                                VALUES (?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?)
-                                    ''', (company, site, td_office,inves,company_phones,\
+                                VALUES (?,?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                    ''', (conta_contatos,company, site, td_office,inves,company_phones,\
                                           company_address,city, country, nome, cargo, phone, email))
 
-
+                conta_contatos = conta_contatos + 1
                 conn.commit()  # Corrigido de 'comit' para 'commit'
                 cursor.close()
                 conn.close()  # Adicionado para fechar a conexão com o banco de dados
