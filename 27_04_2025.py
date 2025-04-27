@@ -66,6 +66,30 @@ while True:
         try:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
+            time.sleep(1)
+            offices = navegador.find_elements(By.CSS_SELECTOR,
+                                              'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
+            try:
+                offices.click()
+            except:
+                pass
+            try:
+
+                WebDriverWait(navegador, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, "//button[@value='OFFICE']"))).click()
+            except:
+                pass
+            for office in offices:
+                company_name = office.find_element(By.CSS_SELECTOR,
+                                                   'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(1) > h2').text
+                print(company_name)
+            try:
+
+                WebDriverWait(navegador, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, "//button[@value='OFFICE']"))).click()
+            except:
+                pass
+
             spans = navegador.find_elements(By.CSS_SELECTOR,
                                             'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
             WebDriverWait(navegador, 10).until(
@@ -117,14 +141,12 @@ while True:
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
             print(i)
-            if i == 1000:
+            if i == 100:
                 i = 0
                 navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
-                """WebDriverWait(navegador, 10).until(EC.element_to_be_clickable(
-                    (By.XPATH, '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button'))).click()"""
-
-                # navegador.execute_script("window.scrollTo(0, 0);")
+                navegador.find_element("xpath",
+                                       '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button').click()
+                time.sleep(1)
 
         except:
             print(f"Elemento na linha {i + 1} não encontrado.")
