@@ -9,14 +9,12 @@ import time
 import sqlite3
 options = webdriver.EdgeOptions()
 options.add_argument("--start-maximized")
-
 options.add_argument("--disable-infobars")
 options.add_argument("--disable-extensions")
 options.add_argument("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0")
 options.add_argument("--force-device-scale-factor=0.8")
 navegador = webdriver.Edge(options=options)
 navegador.maximize_window()
-
 navegador.get("https://beta.familyofficelist.org/sign-in")
 navegador.maximize_window()
 time.sleep(2)
@@ -37,12 +35,17 @@ total_linhas_texto = [total_linha.text for total_linha in total_linhas]
 total = int(total_linhas_texto[0])
 conta_contatos=1
 #time.sleep(60)
+conn = sqlite3.connect('my_data.db')
+cursor = conn.cursor()
+cursor.execute('''delete from contacts''')
+conn.commit()  # Corrigido de 'comit' para 'commit'
+cursor.close()
+conn.close()
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
             td = tr.find_element(By.XPATH, 'td[2]')
             # Localiza o elemento da empresa dentro da célula
-
             td_company = tr.find_element(By.XPATH, 'td[2]')
             company = td_company.find_element(By.XPATH, 'div/div/p').text
             try:
@@ -50,25 +53,21 @@ while True:
                 site = td_site.find_element(By.XPATH, 'span/p/a').get_attribute('href')
             except:
                 site = "no web site"
-
             try:
                 td_office_type = tr.find_element(By.XPATH, 'td[4]')
                 td_office = td_office_type.find_element(By.XPATH, 'p').text
             except:
                 td_office = "no office type"
-
             try:
                 td_country = tr.find_element(By.XPATH, 'td[5]')
                 country = td_country.find_element(By.XPATH, 'div/p').text
             except:
                 country = "no country"
-
             try:
                 td_city = tr.find_element(By.XPATH, 'td[6]')
                 city = td_city.find_element(By.XPATH, 'p').text
             except:
                 city = "no city"
-
         try:
             WebDriverWait(navegador, 10).until(
                 EC.element_to_be_clickable((By.XPATH, f'//*[@id="table"]/tbody/tr[{i + 1}]/td[2]/div/div/p'))).click()
@@ -79,9 +78,7 @@ while True:
                 offices.click()
             except:
                 pass
-
             try:
-
                 WebDriverWait(navegador, 10).until(
                     EC.element_to_be_clickable((By.XPATH, "//button[@value='OFFICE']"))).click()
             except:
@@ -89,7 +86,6 @@ while True:
             for office in offices:
                 company_name = office.find_element(By.CSS_SELECTOR,
                                                    'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(1) > h2').text
-
                 pass
                 try:
                     investors = navegador.find_elements(By.CSS_SELECTOR,
@@ -112,13 +108,11 @@ while True:
                     company_address = "\n".join(adresses_texto)
                 except:
                     company_address = 'no address'
-
             try:
                 WebDriverWait(navegador, 10).until(
                     EC.element_to_be_clickable((By.XPATH, "//button[@value='OFFICE']"))).click()
             except:
                 pass
-
             spans = navegador.find_elements(By.CSS_SELECTOR,
                                             'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
             WebDriverWait(navegador, 10).until(
@@ -137,8 +131,6 @@ while True:
                                                  '//div[@class="MuiBox-root css-0"]//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
 
                 emails = td.find_elements(By.XPATH, '//a[contains(@href, "mailto")]')
-
-
             except NoSuchElementException:
                 navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
                 name1 = "sem nome"
@@ -158,7 +150,7 @@ while True:
                 cursor = conn.cursor()
                 cursor.execute('''
                             INSERT INTO contacts (count_contact,company, website, office,investors,company_phones,\
-                             company_address,city_company, country_company, nome, cargo, contact_phone, email)
+                             company_address,city_company, country_company, name, position, contact_phone, email)
                                 VALUES (?,?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?)
                                     ''', (conta_contatos,company, site, td_office,inves,company_phones,\
                                           company_address,city, country, nome, cargo, phone, email))
@@ -189,6 +181,6 @@ while True:
             break"""
 
     # navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-print(my_data)
+
 
 navegador.quit()
