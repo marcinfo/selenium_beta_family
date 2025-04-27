@@ -7,7 +7,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 import time
-import sq
 
 options = webdriver.EdgeOptions()
 options.add_argument("--start-maximized")
@@ -189,15 +188,7 @@ while True:
                              "industry":industry, "sub-industry":sub,"descripition":descripit,"nome": nome, "cargo": cargo, "contact phone": fone,
                              "e-mail": email}
                         )
-                        conn = sqlite3.connect('my_data.db')
-                        cursor = conn.cursor()
-                        cursor.execute('''
-                                INSERT INTO contacts (nome, cargo, phone, email)
-                                VALUES (?, ?, ?, ?)
-                            ''', (nome, cargo, phone, email))
-                        conn.commit()  # Corrigido de 'comit' para 'commit'
-                        cursor.close()
-                        conn.close()  # Adicionado para fechar a conexão com o banco de dados
+
 
                     i = i + 1
                     conta_corp = conta_corp + 1
