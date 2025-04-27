@@ -53,9 +53,10 @@ while True:
 
             try:
                 td_office_type = tr.find_element(By.XPATH, 'td[4]')
-                office = td_office = td_office_type.find_element(By.XPATH, 'p').text
+                td_office = td_office_type.find_element(By.XPATH, 'p').text
             except:
-                office = "no office type"
+                td_office = "no office type"
+
             try:
                 td_country = tr.find_element(By.XPATH, 'td[5]')
                 country = td_country.find_element(By.XPATH, 'div/p').text
@@ -78,6 +79,7 @@ while True:
                 offices.click()
             except:
                 pass
+
             try:
 
                 WebDriverWait(navegador, 10).until(
@@ -89,8 +91,29 @@ while True:
                                                    'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(1) > h2').text
 
                 pass
-            try:
+                try:
+                    investors = navegador.find_elements(By.CSS_SELECTOR,
+                                                        'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > p')
+                    investors_texto = [investor.text for investor in investors]
+                    inves = "\n".join(investors_texto)
+                except:
+                    inves = 'no investors'
+                try:
+                    phones = navegador.find_elements(By.CSS_SELECTOR,
+                                                     'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2) > a')
+                    phones_texto = [phone.text for phone in phones]
+                    company_phones = "\n".join(phones_texto)
+                except:
+                    company_phones = 'no phone'
+                try:
+                    adresses = navegador.find_elements(By.CSS_SELECTOR,
+                                                       'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(1) > div:nth-child(2) > a')
+                    adresses_texto = [adress.text for adress in adresses]
+                    company_address = "\n".join(adresses_texto)
+                except:
+                    company_address = 'no address'
 
+            try:
                 WebDriverWait(navegador, 10).until(
                     EC.element_to_be_clickable((By.XPATH, "//button[@value='OFFICE']"))).click()
             except:
@@ -134,9 +157,13 @@ while True:
                 conn = sqlite3.connect('my_data.db')
                 cursor = conn.cursor()
                 cursor.execute('''
-                            INSERT INTO contacts (company, website, city_company, country_company, nome, cargo, contact_phone, email)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                        ''', (company, site, city, country, nome, cargo, phone, email))
+                            INSERT INTO contacts (company, website, office,investors,company_phones,\
+                             company_address,city_company, country_company, nome, cargo, contact_phone, email)
+                                VALUES (?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                    ''', (company, site, td_office,inves,company_phones,\
+                                          company_address,city, country, nome, cargo, phone, email))
+
+
                 conn.commit()  # Corrigido de 'comit' para 'commit'
                 cursor.close()
                 conn.close()  # Adicionado para fechar a conexão com o banco de dados
