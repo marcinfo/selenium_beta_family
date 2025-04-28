@@ -169,18 +169,15 @@ while True:
                 navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 navegador.find_element("xpath",
                                        '//*[@id="simple-tabpanel-0"]/div/div[2]/div/div/nav/ul/li[7]/button').click()
-                time.sleep(1)
+
 
         except:
             print(f"Elemento na linha {i + 1} não encontrado.")
 
-            """df = pd.DataFrame(my_data)
-            # Exporta o DataFrame para um arquivo CSV
-            csv_file = "page5.csv"
-            df.to_csv(csv_file, index=False)
-            break"""
-
-    # navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
+"""df = pd.DataFrame(my_data)
+# Exporta o DataFrame para um arquivo CSV
+csv_file = "page5.csv"
+df.to_csv(csv_file, index=False)
+break"""
 
 navegador.quit()
