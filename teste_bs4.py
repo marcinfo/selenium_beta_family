@@ -135,15 +135,15 @@ for linha in tabela.find_all('tr'):
     cargos_texto = [cargo.text for cargo in cargos]
     phones_texto = [phone.text for phone in phones]
     emails_texto = [email.text for email in emails]
-
+    i = i + 1
     for nome, cargo, phone, email in zip(nomes_texto, cargos_texto, phones_texto, emails_texto):
-        print(i,nome,cargos_texto,phones_texto,emails_texto)
+        print(i,dados,nome,cargos_texto,phones_texto,emails_texto)
 
     address_texto = address.text
     investor_type_texto = investor_type.text
     navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
 
-    i=i+1
+
 
 # Fecha o navegador
 navegador.quit()

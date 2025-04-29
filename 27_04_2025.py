@@ -35,12 +35,12 @@ total_linhas_texto = [total_linha.text for total_linha in total_linhas]
 total = int(total_linhas_texto[0])
 conta_contatos=1
 #time.sleep(60)
-conn = sqlite3.connect('my_data.db')
-cursor = conn.cursor()
-cursor.execute('''delete from contacts''')
-conn.commit()  # Corrigido de 'comit' para 'commit'
-cursor.close()
-conn.close()
+# conn = sqlite3.connect('my_data.db')
+# cursor = conn.cursor()
+# cursor.execute('''delete from contacts''')
+# conn.commit()  # Corrigido de 'comit' para 'commit'
+# cursor.close()
+# conn.close()
 while True:
     for tr in tabela_movimentacoes.find_elements(By.TAG_NAME, "tr"):
         for td in tr.find_elements(By.TAG_NAME, "td"):
@@ -148,17 +148,26 @@ while True:
             for nome, cargo, phone, email in zip(nomes_texto, cargos_texto, phones_texto, emails_texto):
                 conn = sqlite3.connect('my_data.db')
                 cursor = conn.cursor()
+
                 cursor.execute('''
-                            INSERT INTO contacts (count_contact,company, website, office,investors,company_phones,\
-                             company_address,city_company, country_company, name, position, contact_phone, email)
-                                VALUES (?,?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?)
-                                    ''', (conta_contatos,company, site, td_office,inves,company_phones,\
+                SELECT COUNT(*) FROM contacts WHERE name = ? AND position = ? AND contact_phone = ? AND email = ?
+                ''', (company, site, td_office,inves,company_phones,\
                                           company_address,city, country, nome, cargo, phone, email))
 
-                conta_contatos = conta_contatos + 1
-                conn.commit()  # Corrigido de 'comit' para 'commit'
-                cursor.close()
-                conn.close()  # Adicionado para fechar a conexão com o banco de dados
+                if cursor.fetchone()[0] == 0:
+                    cursor.execute('''
+                            INSERT OR IGNORE INTO contacts (company, website, office,investors,company_phones,\
+                             company_address,city_company, country_company, name, position, contact_phone, email)
+                                VALUES (?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                    ''', (company, site, td_office,inves,company_phones,\
+                                          company_address,city, country, nome, cargo, phone, email))
+                    conn.commit()  # Corrigido de 'comit' para 'commit'
+                    cursor.close()
+                    conn.close()  # Adicionado para fechar a conexão com o banco de dados
+
+                else:
+                    print(
+                        f"Dados não inseridos para {nome}, {cargo}, {phone}, {email} - já existem no banco de dados.")
 
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
