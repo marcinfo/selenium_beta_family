@@ -10,11 +10,16 @@ import sqlite3
 from bs4 import BeautifulSoup
 
 options = webdriver.ChromeOptions()
+
 options.add_argument("--start-maximized")
 options.add_argument("--disable-infobars")
 options.add_argument("--disable-extensions")
 options.add_argument("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0")
 options.add_argument("--force-device-scale-factor=0.8")
+options.add_argument("--disable-gpu")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-background-timer-throttling")
 
 navegador = webdriver.Chrome(options=options)
 navegador.maximize_window()
@@ -76,6 +81,16 @@ for linha in tabela.find_all('tr'):
     investor_type = elemento_pop_up.select_one('body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(1) > div > div:nth-child(2) > div:nth-child(1) > p')
     descripition = []
     try:
+        read_more = WebDriverWait(navegador, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR,
+                                            'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(3) > div > div > h4'))
+        )
+        # Clica no elemento
+        try:
+            read_more.click()
+        except :
+            pass
+
         company_descriptions = navegador.find_elements(By.CSS_SELECTOR,
                                                        'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(3) > div > div:nth-child(3) > div > div > div > div')
         company_descriptions_texto = [company_description.text for company_description in company_descriptions]
@@ -84,22 +99,51 @@ for linha in tabela.find_all('tr'):
             descripition.append(p.text)
     except:
         descripition='no description'
+    try:
+        WebDriverWait(navegador, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[@value='OFFICE']"))).click()
+    except:
+        pass
+    spans = navegador.find_elements(By.CSS_SELECTOR,
+                                    'div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper')
+    WebDriverWait(navegador, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                    'body > div.MuiPopover-root.MuiModal-root.css-jp7szo > div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-kteami-popper-popper > div > div:nth-child(3) > div:nth-child(2) > div > button:nth-child(2)'))).click()
+    try:
+        name = navegador.find_element(By.XPATH,
+                                       '//h3[@class="MuiTypography-root MuiTypography-h3 css-15y59ci-root"]')
 
+        nomes_texto = [nome.text for nome in navegador.find_elements(By.TAG_NAME, 'h3')]
 
+        cargos = navegador.find_elements(By.XPATH,
+                                         '//span[@class="MuiTypography-root MuiTypography-overline css-6xz56m-root"]')
+
+        phones = navegador.find_elements(By.XPATH,
+                                         '//div[@class="MuiBox-root css-0"]//a[@class="MuiTypography-root MuiTypography-body1 MuiLink-root MuiLink-underlineAlways css-1wqzc97-root"]')
+
+        emails = navegador.find_elements(By.XPATH, '//a[contains(@href, "mailto")]')
+    except NoSuchElementException:
+        navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
+        name = "sem nome"
+        nomes_texto = []
+        cargos = []
+        phones = []
+        emails = []
+    except (NoSuchElementException, TimeoutException):
+        navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
+        continue
+    cargos_texto = [cargo.text for cargo in cargos]
+    phones_texto = [phone.text for phone in phones]
+    emails_texto = [email.text for email in emails]
+
+    for nome, cargo, phone, email in zip(nomes_texto, cargos_texto, phones_texto, emails_texto):
+        print(i,nome,cargos_texto,phones_texto,emails_texto)
 
     address_texto = address.text
     investor_type_texto = investor_type.text
     navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
 
-    print(descripition)
-
-
-
-
     i=i+1
-
-
-
 
 # Fecha o navegador
 navegador.quit()
