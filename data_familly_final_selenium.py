@@ -152,28 +152,24 @@ while True:
                 cursor = conn.cursor()
                 # Verifica se o registro já existe
                 cursor.execute('''
-                    SELECT COUNT(*) FROM contacts WHERE company = ? AND name = ? AND position = ? AND contact_phone = ? AND email = ?
-                ''', (company,nome, cargo, phone, email))
-
-                if cursor.fetchone()[0] == 0:
-                    # Se não existir, insere o novo registro
-                    cursor.execute('''
-                        INSERT INTO contacts (company, website, office, investors, company_phones,
-                                              company_address, city_company, country_company, name, position, contact_phone, email)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    ''', (
-                    company, site, td_office, inves, company_phones, company_address, city, country, nome, cargo, phone,
-                    email))
-                    conta_contatos += 1
-                    conn.commit()
+                                        SELECT COUNT(*) FROM contacts WHERE company = ? AND name = ? AND position = ? AND contact_phone = ? AND email = ?
+                                    ''', (company, nome, cargo, phone, email))
+                result = cursor.fetchone()
+                if result[0] > 0:
+                    print(f"Dados não inseridos para {nome}, {cargo}, {phone}, {email} - já existem no banco de dados.")
                 else:
-                    print(f"Dados não inseridos para  {company} e contato {nome} - já existem no banco de dados.")
-                    nao_inserido=nao_inserido+1
-                    print(f"tentativa {nao_inserido}")
-                    if nao_inserido==20:
-                        cursor.close()
-                        conn.close()
-                        navegador.quit()
+                    cursor.execute('''
+                                                INSERT OR IGNORE INTO contacts (count_contact,company, website, office,investors,company_phones,\
+                                                 company_address,city_company, country_company, name, position, contact_phone, email)
+                                                    VALUES (?,?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                                        ''',
+                                   (conta_contatos, company, site, td_office, inves, company_phones, \
+                                    company_address, city, country, nome, cargo, phone, email))
+                    conta_contatos = conta_contatos + 1
+                    conn.commit()  # Corrigido de 'comit' para 'commit'
+                cursor.close()
+                conn.close()  # Adicionado
+
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
             conta_corp = conta_corp + 1
