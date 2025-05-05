@@ -11,18 +11,21 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-#Configurações do navegador
-options = webdriver.ChromeOptions()
-#inicia maximizando a tela
-options.add_argument("--start-maximized")
-# desabilita barras de informações
-options.add_argument("--disable-infobars")
-#desabilita extensoes
-options.add_argument("--disable-extensions")
-options.add_argument("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0")
-# altera o zoom do browser
-options.add_argument("--force-device-scale-factor=0.8")
-navegador = webdriver.Chrome(options=options)
+
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+
+options = Options()
+
+# Para definir o user-agent corretamente:
+options.set_preference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0")
+
+# Para iniciar o navegador
+navegador = webdriver.Firefox(options=options)
+
+# Maximizar a janela após iniciar
+navegador.maximize_window()
+
 #inicia o site
 navegador.get("https://beta.familyofficelist.org/sign-in")
 
@@ -172,6 +175,7 @@ while True:
                 if result[0] > 0:
                     print(f"Dados não inseridos para {company} {nome}, {cargo}, {phone}, {email} - já existem no banco de dados.")
                     not_save=not_save+1
+                    conta_contatos = conta_contatos + 1
                     try:
                         cursor.close()
                         conn.close()
@@ -199,7 +203,7 @@ while True:
             navegador.find_element(By.XPATH, "//span[@aria-label='Close']/button").click()
             i += 1
             conta_corp = conta_corp + 1
-            print(f"total processada {conta_contatos}, de {total} linha atual {i}  ", )
+            print(f"total de copntatoc processados {conta_contatos}, de {total} linha atual {i} iteração {conta_corp}.", )
             if i == 100:
                 i = 0
                 navegador.execute_script("window.scrollTo(0, document.body.scrollHeight);")
